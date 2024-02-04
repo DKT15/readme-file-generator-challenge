@@ -1,88 +1,106 @@
-// const fs = require("fs");
-// const path = require('path');
-// const inquirer = require("inquirer");
-// const generateMarkdown = require("./utils/generateMarkdown");
-
-// // array of questions for user
-// const questions = [
-
-// ];
-
-// // function to write README file
-// function writeToFile(fileName, data) {
-// }
-
-// // function to initialize program
-// function init() {
-
-// }
-
-// // function call to initialize program
-// init();
-
+//Three requires
 const inquirer = require("inquirer");
 const fs = require("fs");
+const util = require("util");
 
-const questions = [
-  {
-    type: "input",
-    name: "fileName",
-    message: "name of your file",
-  },
-  {
-    type: "list",
-    name: "fileType",
-    message: "choose the file extension",
-    choices: ["md", "txt", "html"],
-  },
-  {
-    type: "input",
-    name: "header",
-    message: "please type a header",
-  },
-];
+const writeFileAsync = util.promisify(fs.writeFile);
 
-const createHTMLTemplate = (header) => {
+// This is the prmopt user function that which is calling inquirer.prompt. Below it is various questions that will be in the file.
+const promptUser = () =>
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "nameOfRepo",
+      message: "What is the name of your Repo?",
+    },
+    {
+      type: "input",
+      name: "description",
+      message: "Write a description for your project.",
+    },
+    {
+      type: "test",
+      name: "tableOfContents",
+      message: "Add your relevant links to navigate around the README",
+    },
+    {
+      type: "input",
+      name: "installation",
+      message:
+        "If applicable, describe the steps required to install your project.",
+    },
+    {
+      type: "input",
+      name: "usage",
+      message: "Provide instructions and examples of your project in use ",
+    },
+    {
+      type: "list",
+      name: "license",
+      message: "choose a license for your project",
+      choices: [
+        "GNU LGPLv3",
+        "Mozilla Public License 2.0",
+        "Apache License 2.0",
+        "MIT License",
+        "No license",
+      ],
+    },
+    {
+      type: "input",
+      name: "contributing",
+      message:
+        "If applicable, provide guidelines on how other developers can contribute to your project.",
+    },
+    {
+      type: "input",
+      name: "tests",
+      message:
+        "If applicable, provide any tests written for your application and provide examples on how to run them.",
+    },
+    {
+      type: "input",
+      name: "questions",
+      message:
+        "please add your GitHub username and email address to be contacted if anyone has any questions.",
+    },
+  ]);
+
+//This function takes in the data from above and then returns it.
+const createMarkdownFile = (data) => {
+  console.log(data);
+  const {
+    nameOfRepo,
+    description,
+    tableOfContents,
+    installation,
+    usage,
+    license,
+    contributing,
+    tests,
+    questions,
+  } = data; //object destructuring
+
   return `
-  <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>Document</title>
-  </head>
-
-  <body>
-    <header>${header}</header>
-  </body>
-</html>
+    ## ${nameOfRepo}
+    ## ${description}
+    ## ${tableOfContents}
+    ## ${installation}
+    ## ${usage}
+    ## ${license}
+    ## ${contributing}
+    ## ${tests}
+    ## ${questions}
     `;
 };
 
-const createMarkdownTemplate = (header) => {
-  return `
-    # ${header}
-    `;
-};
-
-inquirer.prompt(questions).then((data) => {
-  const { fileName, fileType, header } = data; //object destructuring
-  const file = `${fileName}.$[fileType]`;
-  let fileText;
-
-  switch (fileType) {
-    case "html":
-      fileText = createHTMLTemplate(header);
-      break;
-    case "md":
-      fileText = createMarkdownTemplate(header);
-      break;
-
-    default:
-      fileText = "This file type isn't implemented yet";
-      break;
-  }
-
-  fs.writeFile(file, fileText, (err) =>
-    err ? console.log("There is an error") : console.log("It worked!")
-  );
-});
+// Prompt user function is called here. When it is called, it passes in the data and the generateREADME.md file is being created. The createMarkdownFile is being run with the data inside of it.
+promptUser()
+  .then((data) => writeFileAsync("generateREADME.md", createMarkdownFile(data)))
+  .then(
+    () =>
+      console.log(
+        "You have added your data successfully to the README.md file."
+      ) //If it passes then the success message will be displayed. If not then the error message will be.
+  )
+  .catch((err) => console.log(err));
