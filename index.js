@@ -81,17 +81,16 @@ const createMarkdownFile = (data) => {
     questions,
   } = data; //object destructuring
 
-  return `
-    ## ${nameOfRepo}
-    ## ${description}
-    ## ${tableOfContents}
-    ## ${installation}
-    ## ${usage}
-    ## ${license}
-    ## ${contributing}
-    ## ${tests}
-    ## ${questions}
-    `;
+  return `## ${nameOfRepo} 
+## ${description}
+## ${tableOfContents}
+## ${installation}
+## ${usage}
+## ${license}
+## ${contributing}
+## ${tests}
+## ${questions}
+  `;
 };
 
 // Prompt user function is called here. When it is called, it passes in the data and the generateREADME.md file is being created. The createMarkdownFile is being run with the data inside of it.
