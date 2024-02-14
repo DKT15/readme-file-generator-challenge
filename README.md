@@ -23,7 +23,7 @@ This is a command-line application that dynamically generates a professional REA
 
 ## Getting Started
 
-To get started with website, follow these steps:
+To get started with the website, follow these steps:
 
 1. Clone this repository to your local machine.
 
